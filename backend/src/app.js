@@ -1,30 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import dotenv from 'dotenv';
-import { initDb } from './models/index.js';
-import uploadRoutes from './routes/uploadRoutes.js';
-import analysisRoutes from './routes/analysisRoutes.js';
-import { errorHandler } from './middleware/errorHandler.js';
+// backend/src/middleware/errorHandler.js
 
-dotenv.config();
+// Express error-handling middleware (4 args: err, req, res, next)
+export const errorHandler = (err, req, res, next) => {
+  console.error('Error:', err);
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+  const status = err.statusCode || err.status || 500;
 
-app.use('/api/upload', uploadRoutes);
-app.use('/api/analyses', analysisRoutes);
-app.use(errorHandler);
-
-const PORT = process.env.PORT || 4000;
-
-initDb()
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Backend running on http://localhost:${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error('Failed to init DB:', err);
-    process.exit(1);
+  res.status(status).json({
+    error: 'Internal server error',
+    message: err.message || 'Something went wrong'
   });
+};

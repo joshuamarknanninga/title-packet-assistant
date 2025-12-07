@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import UploadPage from './pages/UploadPage.jsx';
 import AnalysisListPage from './pages/AnalysisListPage.jsx';
 import AnalysisDetailPage from './pages/AnalysisDetailPage.jsx';
+import authRoutes from './routes/authRoutes.js';
+import { requireAuth } from './middleware/requireAuth.js';
 
 export default function App() {
   const [view, setView] = useState('upload');

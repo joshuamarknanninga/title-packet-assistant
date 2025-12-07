@@ -1,16 +1,17 @@
+// backend/src/services/openaiService.js
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 dotenv.config();
 
 const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
+// Paste your full system prompt here later
 const SYSTEM_INSTRUCTIONS = `
 You are a senior land title abstractor and examiner assistant...
-[PASTE YOUR FULL SYSTEM PROMPT HERE – the one we wrote earlier]
+[PASTE THE FULL SYSTEM PROMPT WE WROTE]
 `;
 
 export async function analyzeTitlePacket({ textContent }) {
-  // textContent can be: OCR’d PDF text / concatenated doc text / placeholder for now
   const response = await client.responses.create({
     model: 'gpt-4.1-mini',
     instructions: SYSTEM_INSTRUCTIONS,
@@ -25,32 +26,31 @@ export async function analyzeTitlePacket({ textContent }) {
         ]
       }
     ],
-    // You *could* use structured outputs here later; for now, we'll parse manually
     max_output_tokens: 4096
   });
 
-  const outputItem = response.output[0]; // text block (simplified assumption)
-  const fullText = outputItem.content[0].text; // model's text output
+  const first = response.output[0];
+  const fullText = first.content[0].text;
 
-  // Simple split: assume JSON is in a line starting with "{"
+  // Try to split summary vs JSON
   const jsonStart = fullText.indexOf('{');
   let humanSummary = fullText;
-  let jsonData = null;
+  let jsonData = {};
 
   if (jsonStart !== -1) {
     humanSummary = fullText.slice(0, jsonStart).trim();
     const jsonString = fullText.slice(jsonStart);
     try {
       jsonData = JSON.parse(jsonString);
-    } catch (e) {
-      console.error('Failed to parse JSON from model output:', e);
+    } catch (err) {
+      console.error('Failed to parse JSON from model output:', err);
       jsonData = {};
     }
   }
 
-  // Pull requirements/exceptions out for convenience
-  const requirements = jsonData?.requirements ?? [];
-  const exceptions = jsonData?.exceptions ?? [];
+  const requirements = jsonData.requirements ?? [];
+  const exceptions = jsonData.exceptions ?? [];
 
   return { humanSummary, jsonData, requirements, exceptions };
 }
+

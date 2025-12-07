@@ -1,14 +1,14 @@
-import { Router } from 'express';
-import {
-  listAnalyses,
-  getAnalysis,
-  updateRequirementsExceptions
-} from '../controllers/analysisController.js';
+// backend/src/middleware/errorHandler.js
 
-const router = Router();
+// Express error-handling middleware must have 4 params: (err, req, res, next)
+export const errorHandler = (err, req, res, next) => {
+  console.error('Error:', err);
 
-router.get('/', listAnalyses);
-router.get('/:id', getAnalysis);
-router.put('/:id', updateRequirementsExceptions);
+  // If a multer or validation error has a statusCode, respect it
+  const status = err.statusCode || err.status || 500;
 
-export default router;
+  res.status(status).json({
+    error: 'Internal server error',
+    message: err.message || 'Something went wrong',
+  });
+};
