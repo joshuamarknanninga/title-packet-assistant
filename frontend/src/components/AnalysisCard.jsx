@@ -1,18 +1,15 @@
+// frontend/src/components/AnalysisCard.jsx
 import React from 'react';
 
 export default function AnalysisCard({ analysis, onOpen }) {
-  const {
-    id,
-    humanSummary,
-    File,
-    createdAt
-  } = analysis;
+  const { id, humanSummary, File, createdAt } = analysis;
 
-  const summaryPreview = humanSummary?.length > 180
-    ? humanSummary.slice(0, 180) + '…'
-    : humanSummary;
+  const summaryPreview =
+    humanSummary && humanSummary.length > 180
+      ? humanSummary.slice(0, 180) + '…'
+      : humanSummary;
 
-  const created = new Date(createdAt).toLocaleString();
+  const created = createdAt ? new Date(createdAt).toLocaleString() : '';
 
   return (
     <div
@@ -27,8 +24,6 @@ export default function AnalysisCard({ analysis, onOpen }) {
         transition: 'all 0.2s ease-in-out'
       }}
       onClick={() => onOpen(id)}
-      onMouseEnter={(e) => (e.currentTarget.style.boxShadow = '0 4px 10px rgba(0,0,0,0.15)')}
-      onMouseLeave={(e) => (e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.06)')}
     >
       <h3 style={{ marginTop: 0, marginBottom: 8 }}>
         {File?.originalName || 'Unknown File'}

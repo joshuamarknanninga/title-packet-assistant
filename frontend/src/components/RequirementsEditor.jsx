@@ -1,10 +1,7 @@
+// frontend/src/components/RequirementsEditor.jsx
 import React from 'react';
 
-export default function RequirementsEditor({
-  title,
-  items,
-  onChange
-}) {
+export default function RequirementsEditor({ title, items, onChange }) {
   const handleItemChange = (index, value) => {
     const updated = [...items];
     updated[index] = value;

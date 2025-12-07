@@ -1,3 +1,4 @@
+// frontend/src/pages/AnalysisDetailPage.jsx
 import React, { useEffect, useState } from 'react';
 import { fetchAnalysis, updateRequirements } from '../api/client.js';
 import RequirementsEditor from '../components/RequirementsEditor.jsx';
